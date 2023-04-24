@@ -21,8 +21,8 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+Route::get('/home', [App\Http\Controllers\DetailController::class, 'index'])->name('home');
+Route::get('/report', [App\Http\Controllers\DetailController::class, 'report'])->name('report');
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'index'])->name('welcome');
 Route::get('/detail', [App\Http\Controllers\DetailController::class, 'index'])->name('detail');
 Route::get('/detail/delete/{id}', [App\Http\Controllers\DetailController::class, 'destroy']);
@@ -31,5 +31,9 @@ Route::get('/detailfill/{id?}', function ($id = 0) {
     $dt = DB::table('ribbon_detail')->where('detail_id', '=', $id)->get();
     return $dt;
 });
-
+Route::get('/detailribbonfill/{id?}', function ($id = 0) {
+    $dt = DB::table('ribbon_detail')->where('ribbon_id', '=', $id)->get();
+    return $dt;
+});
+Route::get('/filter_childabbr/{date}', 'DetailController@filter_childabbr');
 Auth::routes();

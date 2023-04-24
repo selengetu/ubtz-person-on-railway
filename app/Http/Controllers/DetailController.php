@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
+use Image;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use DB;
+
+use Session;
 use App\Models\Detail;
 
 class DetailController extends Controller
@@ -18,17 +23,28 @@ class DetailController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
+        $schildabbr= $request->schildabbr_id;
+        if(Session::has('schildabbr_id')) {
+            $schildabbr = Session::get('schildabbr_id');
+        }
+        else {
+            Session::put('schildabbr_id', $schildabbr);
+        }
         $dep = DB::select('select * from V_EXECUTOR t');
-        $data = DB::select('select * from ZUTLENT.NBT_ZURCHIL_YARALTAITORMOZ');
-        $det = DB::table('RIBBON_DETAIL')->orderby('detail_id')->get();
-        return view('home', compact('data', 'dep','det'));
+        $data = DB::select('select * from RIBBON_DETAIL t, ZUTLENT.NBT_ZURCHIL_YARALTAITORMOZ w, V_EXECUTOR v where w.ribbon_id = t.ribbon_id(+) and v.executor_id(+)=t.dep_id');
+        return view('home', compact('data', 'dep','schildabbr'));
        
     }
     public function store(Request $request)
     {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('images'), $imageName);
         if ($request->id ==  null) {
             $det = new Detail;
             $det->dep_id = $request->dep_id;
@@ -40,6 +56,9 @@ class DetailController extends Controller
             $det->info_employee = $request->info_employee;
             $det->description = $request->description;
             $det->time = $request->time;
+            $det->ribbon_id = $request->ribbon_id;
+            $det->info_file = $imageName;
+            
             $det->save();
 
         } else {
@@ -60,9 +79,15 @@ class DetailController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function report()
     {
-        Category::where('id', '=', $id)->delete();
-        return 1;
+        $dep = DB::select('select * from V_EXECUTOR t');
+        $data = DB::select('select * from RIBBON_DETAIL t, ZUTLENT.NBT_ZURCHIL_YARALTAITORMOZ w, V_EXECUTOR v where w.ribbon_id = t.ribbon_id and v.executor_id(+)=t.dep_id');
+        return view('report', compact('data', 'dep'));
+       
+    }
+    public function filter_childabbr($schildabbr_id) {
+        Session::put('schildabbr_id',$schildabbr_id);
+        return back();
     }
 }
