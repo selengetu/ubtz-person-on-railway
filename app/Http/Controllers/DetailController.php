@@ -69,11 +69,17 @@ class DetailController extends Controller
         return Redirect('detail');
     }
 
-    public function report()
+    public function report(Request $request)
     {
+        $schildabbr = $request->schildabbr_id;
+        if (Session::has('schildabbr_id')) {
+            $schildabbr = Session::get('schildabbr_id');
+        } else {
+            Session::put('schildabbr_id', $schildabbr);
+        }
         $dep = DB::select('select * from V_EXECUTOR t');
         $data = DB::select('select * from RIBBON_DETAIL t, ZUTLENT.NBT_ZURCHIL_YARALTAITORMOZ w, V_EXECUTOR v where w.ribbon_id = t.ribbon_id and v.executor_id(+)=t.dep_id');
-        return view('report', compact('data', 'dep'));
+        return view('report', compact('data','dep', 'schildabbr'));
     }
 
     public function filter_childabbr($schildabbr_id)

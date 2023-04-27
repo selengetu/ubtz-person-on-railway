@@ -31,8 +31,33 @@
 </div>
 </div>
 
-<div class="card-body">
+<div class="card-body row">
     <br>
+          <div class="form-group col-md-3">
+                            <label for="inputEmail4">Зөрчил гаргасан байгууллага</label>
+                            <select class="form-control select2" id="schildabbr_id" name="schildabbr_id"
+                                onchange="javascript:location.href = 'filter_childabbr/'+this.value;">
+                                <option value="0">Бүгд</option>
+                                @foreach ($dep as $executors)
+                                    <option value="{{ $executors->executor_id }}"
+                                        @if ($executors->executor_id == $schildabbr) selected @endif>
+                                        @if ($executors->executor_type == 2)
+                                            {{ $executors->department_abbr }} - {{ $executors->executor_abbr }}
+                                        @else
+                                            {{ $executors->executor_abbr }}
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="inputEmail4">Эхлэх огноо</label>
+                            <input type="date" class="form-control" maxlength="40" id="start_date" name="start_date">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="inputEmail4">Дуусах огноо</label>
+                            <input type="date" class="form-control" maxlength="40" id="end_date" name="end_date">
+                        </div>
 <div class="table-responsive" >
         <table class="table table-hover table-bordered" id="myTable">
         <thead style="background-color:#AAC7FA">

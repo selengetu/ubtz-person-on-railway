@@ -29,5 +29,5 @@ Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'index'])->n
 Route::get('/detail', [DetailController::class, 'index'])->name('detail');
 Route::get('/detail/delete/{id}', [DetailController::class, 'destroy']);
 Route::post('/adddetail', [DetailController::class, 'store']);
-Route::get('/filter_childabbr/{date}', 'DetailController@filter_childabbr');
+Route::get('/filter_childabbr/{id}', [DetailController::class, 'filter_childabbr']);
 Auth::routes();
